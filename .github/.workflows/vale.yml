@@ -1,0 +1,30 @@
+name: Vale Linter
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  vale:
+    name: vale action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get Changed Files
+        id: get_changed_files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **.md
+          separator: ","
+      - name: Print Changed Markdown Files
+        run: |
+          echo "Changed markdown files: ${{ steps.get_changed_files.outputs.all_changed_files }}"
+
+      - name: Vale Action
+        uses: errata-ai/vale-action@reviewdog
+        with:
+          files: ${{ steps.get_changed_files.outputs.all_changed_files }}
+          filter_mode: file
+          fail_on_error: true
+          separator: ","
